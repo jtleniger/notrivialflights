@@ -116,7 +116,7 @@ exports.handler = function(event, context, callback) {
 
         fromRes = fetch(`${baseUrl}${params.toString()}`);
     } catch (e) {
-        callback(new Error('No API key available.'), {
+        callback(new Error(`Error fetching q=${from}, e=${e}`), {
             statusCode: 400
         });
 
@@ -131,7 +131,7 @@ exports.handler = function(event, context, callback) {
 
         toRes = fetch(`${baseUrl}${params.toString()}`);
     } catch (e) {
-        callback(new Error('No API key available.'), {
+        callback(new Error(`Error fetching q=${to}, e=${e}`), {
             statusCode: 400
         });
 
