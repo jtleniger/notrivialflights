@@ -1,5 +1,4 @@
 const https = require('https');
-require('dotenv').config()
 
 /**
  * Function to get the "as the crow flies" distance between two cities.
