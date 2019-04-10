@@ -8,7 +8,7 @@
     "dev": "nuxt",
     "build": "nuxt build",
     "start": "nuxt start",
-    "generate": "nuxt generate"
+    "generate": "nuxt generate && cd ./functions && yarn && node create-env.js"
   },
   "dependencies": {
     "cross-env": "^5.2.0",
