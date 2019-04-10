@@ -1,4 +1,5 @@
 const https = require('https');
+const URLSearchParams = require('url').URLSearchParams;
 
 /**
  * Function to get the "as the crow flies" distance between two cities.
