@@ -1,4 +1,4 @@
-const https = require('https');
+const axios = require('axios');
 const URLSearchParams = require('url').URLSearchParams;
 
 /**
@@ -44,50 +44,11 @@ const distance = function (lat1, lon1, lat2, lon2) {
     return dist;
 }
 
-const fetch = function(url) {
-    const { statusCode } = res;
-    const contentType = res.headers['content-type'];
-
-    let error;
-
-    if (statusCode !== 200) {
-        error = new Error('Request Failed.\n' +
-                        `Status Code: ${statusCode}`);
-
-    } else if (!/^application\/json/.test(contentType)) {
-        error = new Error('Invalid content-type.\n' +
-                        `Expected application/json but received ${contentType}`);
-    }
-
-    if (error) {
-        // Consume response data to free up memory
-        res.resume();
-        
-        throw error;
-    }
-
-    res.setEncoding('utf8');
-    let rawData = '';
-    res.on('data', (chunk) => { rawData += chunk; });
-
-    res.on('end', () => {
-        try {
-            const parsedData = JSON.parse(rawData);
-            
-            return parsedData;
-        } catch (e) {
-            throw e;
-        }
-    });
-}
-
 /**
  * EXPORTED FUNCTION
  */
 exports.handler = function(event, context, callback) {
     const baseUrl = 'https://api.opencagedata.com/geocode/v1/json?';
-
-    let fromRes, toRes = null;
 
     const { from, to } = event.queryStringParameters;
 
@@ -109,45 +70,35 @@ exports.handler = function(event, context, callback) {
         return;
     }
 
-    try {
-        const params = new URLSearchParams();
+    const p1 = new URLSearchParams();
 
-        params.append('q', from);
-        params.append('key', key);
+    p1.append('q', from);
+    p1.append('key', key);
 
-        fromRes = fetch(`${baseUrl}${params.toString()}`);
-    } catch (e) {
-        callback(new Error(`Error fetching q=${from}, e=${e}`), {
+    const p2 = new URLSearchParams();
+
+    p2.append('q', to);
+    p2.append('key', key);
+
+    axios.all([
+        axios.get(`${baseUrl}${p1.toString()}`),
+        axios.get(`${baseUrl}${p2.toString()}`)
+    ]).then(axios.spread(function (r1, r2) {
+        const geo1 = r1.data.results[0].geometry;
+        const geo2 = r2.data.results[0].geometry;
+
+        const result = distance(geo1.lat, geo1.lng, geo2.lat, geo2.lng);
+
+        callback(null, {
+            statusCode: 200,
+            body: {
+                distance: result
+            }
+        });
+    }))
+    .catch(function (error) {
+        callback(new Error(`Error fetching from=${from}, to=${to}, e=${error}`), {
             statusCode: 400
         });
-
-        return;
-    }
-
-    try {
-        const params = new URLSearchParams();
-
-        params.append('q', to);
-        params.append('key', key);
-
-        toRes = fetch(`${baseUrl}${params.toString()}`);
-    } catch (e) {
-        callback(new Error(`Error fetching q=${to}, e=${e}`), {
-            statusCode: 400
-        });
-
-        return;
-    }
-
-    const geo1 = fromRes.data.results[0].geometry;
-    const geo2 = toRes.data.results[0].geometry;
-
-    const result = distance(geo1.lat, geo1.lng, geo2.lat, geo2.lng);
-
-    callback(null, {
-        statusCode: 200,
-        body: {
-            distance: result
-        }
     });
 };
