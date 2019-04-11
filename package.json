@@ -8,8 +8,7 @@
     "dev": "nuxt",
     "build": "nuxt build",
     "start": "nuxt start",
-    "generate": "nuxt generate && netlify-lambda build lambda-src",
-    "lambda-serve": "netlify-lambda serve lambda-src"
+    "generate": "nuxt generate"
   },
   "dependencies": {
     "@nuxtjs/axios": "^5.0.0",
@@ -20,7 +19,6 @@
   "devDependencies": {
     "eslint-config-prettier": "^3.1.0",
     "eslint-plugin-prettier": "2.6.2",
-    "netlify-lambda": "^1.4.3",
     "nodemon": "^1.11.0",
     "prettier": "1.14.3"
   }
