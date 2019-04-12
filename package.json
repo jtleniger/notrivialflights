@@ -1,14 +1,12 @@
 {
   "name": "notrivialflights",
   "version": "1.0.0",
-  "description": "My hunky-dory Nuxt.js project",
+  "description": "notrivialflights.com",
   "author": "Justin Leniger",
   "private": true,
   "scripts": {
     "dev": "nuxt",
-    "build": "nuxt build",
-    "start": "nuxt start",
-    "generate": "nuxt generate"
+    "generate": "nuxt generate && cd src/ && yarn"
   },
   "dependencies": {
     "@nuxtjs/axios": "^5.0.0",

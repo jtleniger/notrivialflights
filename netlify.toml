@@ -1,2 +1,4 @@
 [build]
-    functions = "lambda"
+    base = "dist/"
+    command = "yarn run generate"
+    functions = "src"
