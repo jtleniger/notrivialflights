@@ -148,8 +148,8 @@ exports.handler = async function(event, context, callback) {
 
     const result = distance(geo1.lat, geo1.lng, geo2.lat, geo2.lng);
 
-    callback(null, {
+    callback(null, JSON.stringify({
         statusCode: 200,
-        body: `${result}`
-    });
+        body: result
+    }));
 };
