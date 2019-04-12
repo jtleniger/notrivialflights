@@ -102,7 +102,7 @@ exports.handler = async function(event, context, callback) {
     const { from, to } = event.queryStringParameters;
 
     if (!from || !to) {
-        callback(new Error('Missing one or more paremeters.'), {
+        callback(new Error('Missing one or more parameters.'), {
             statusCode: 400
         });
 
@@ -120,18 +120,21 @@ exports.handler = async function(event, context, callback) {
     }
 
     try {
-        const p1 = new URLSearchParams();
+        const keyParam = ['key', key];
 
-        p1.append('q', from);
-        p1.append('key', key);
+        const p1 = new URLSearchParams([
+            keyParam,
+            ['q', from]
+        ]);
 
-        const p2 = new URLSearchParams();
-
-        p2.append('q', to);
-        p2.append('key', key);
+        const p2 = new URLSearchParams([
+            keyParam,
+            ['q', to]
+        ]);
 
         fromRes = await fetch(`${baseUrl}${p1.toString()}`);
         toRes = await fetch(`${baseUrl}${p2.toString()}`);
+        
     } catch (e) {
         callback(new Error(`Error calling opencage: from=${from}, to=${to}`), {
             statusCode: 400

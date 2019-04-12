@@ -65,7 +65,14 @@ export default {
   },
   methods: {
     calculate: function() {
-      return;
+      const params = new URLSearchParams([
+        ['from', this.departing],
+        ['to', this.arriving]
+      ]);
+
+      const res = await axios.get(`/.netlify/functions/getdistance?${params.toString()}`);
+
+      console.log(res);
     },
 
     carbon: function(km) {
