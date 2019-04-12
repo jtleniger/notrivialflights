@@ -94,7 +94,7 @@ const fetch = async function(url) {
 /**
  * EXPORTED FUNCTION
  */
-exports.handler = async function(event, context, callback) {
+exports.handler = function(event, context, callback) {
     const baseUrl = 'https://api.opencagedata.com/geocode/v1/json?';
 
     let fromRes, toRes = null;
@@ -105,8 +105,6 @@ exports.handler = async function(event, context, callback) {
         callback(new Error('Missing one or more parameters.'), {
             statusCode: 400
         });
-
-        return;
     }
 
     const key = process.env.OPENCAGE_KEY;
@@ -115,8 +113,6 @@ exports.handler = async function(event, context, callback) {
         callback(new Error('No API key available.'), {
             statusCode: 400
         });
-
-        return;
     }
 
     try {
@@ -132,24 +128,21 @@ exports.handler = async function(event, context, callback) {
             ['q', to]
         ]);
 
-        fromRes = await fetch(`${baseUrl}${p1.toString()}`);
-        toRes = await fetch(`${baseUrl}${p2.toString()}`);
+        Promise.all([fetch(`${baseUrl}${p1.toString()}`), fetch(`${baseUrl}${p2.toString()}`)]).then(function(values) {
+            const geo1 = values[0].results[0].geometry;
+            const geo2 = values[1].results[0].geometry;
+
+            const result = distance(geo1.lat, geo1.lng, geo2.lat, geo2.lng);
+
+            callback(null, {
+                statusCode: 200,
+                body: result
+            });
+        });
         
     } catch (e) {
         callback(new Error(`Error calling opencage: from=${from}, to=${to}`), {
             statusCode: 400
         });
-
-        return;
     }
-
-    const geo1 = fromRes.results[0].geometry;
-    const geo2 = toRes.results[0].geometry;
-
-    const result = distance(geo1.lat, geo1.lng, geo2.lat, geo2.lng);
-
-    callback(null, JSON.stringify({
-        statusCode: 200,
-        body: result
-    }));
-};
+}
