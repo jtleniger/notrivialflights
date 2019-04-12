@@ -40,8 +40,6 @@
     </div>
     <section class="section" v-if="tons">
       <h1 class="has-text-centered is-size-1">~{{ tons }} tons of CO<sub>2</sub></h1>
-      <p class="has-text-centered is-size-3">or</p>
-      <h1 class="has-text-centered is-size-1">~{{ gallons }} gallons of gas burned</h1>
     </section>
   </div>
 </template>
