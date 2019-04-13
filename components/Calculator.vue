@@ -38,8 +38,8 @@
         </div>
       </div>
     </div>
-    <section class="section" v-if="tons">
-      <h1 class="has-text-centered is-size-1">~{{ tons }} tons of CO<sub>2</sub></h1>
+    <section class="section" v-if="distance">
+      <h1 class="has-text-centered is-size-1">~{{ carbonTons }} tons of CO<sub>2</sub></h1>
     </section>
   </div>
 </template>
@@ -56,14 +56,16 @@ export default {
     return {
       arriving: '',
       departing: '',
-      tons: null,
-      gallons: null,
-      fetching: false
+      fetching: false,
+      error: false,
+      distance: null
     }
   },
+
   methods: {
     calculate: async function() {
       this.fetching = true;
+      this.error = false;
 
       const params = new URLSearchParams([
         ['from', this.departing],
@@ -72,13 +74,23 @@ export default {
 
       const res = await axios.get(`/.netlify/functions/getdistance?${params.toString()}`);
 
-      console.log(res);
+      if (res.status !== 200) {
+        this.error = true;
+      } else {
+        this.distance = res.data.result;
+      }
 
       this.fetching = false;
-    },
+    }
+  },
 
-    carbon: function(km) {
-      return ( ((0.000134576 * Math.pow(km, 2)) + (6.1798 * km) + 3446.2 ) / (280.39 * 0.77) ) * 0.951 * 0.8 * (3.15 * 2 + .51) * 2.20462;
+  computed: {
+    carbonTons: function(km) {
+      if (!this.distance) {
+        return null;
+      }
+
+      return ( ((0.000134576 * Math.pow(this.distance, 2)) + (6.1798 * this.distance) + 3446.2 ) / (280.39 * 0.77) ) * 0.951 * 0.8 * (3.15 * 2 + .51) * 2.20462;
     }
   }
 }
