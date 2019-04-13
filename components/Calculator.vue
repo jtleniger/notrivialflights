@@ -31,7 +31,7 @@
       <div class="field-body">
         <div class="field">
           <div class="control">
-            <button class="button is-primary" v-bind:class="{ 'is-loading': fetching }" v-on:click="calculate">
+            <button class="button is-primary" v-bind:class="{ 'is-loading': fetching, 'is-danger': error }" v-on:click="calculate">
               Calculate
             </button>
           </div>
@@ -39,7 +39,7 @@
       </div>
     </div>
     <section class="section" v-if="distance">
-      <h1 class="has-text-centered is-size-1">~{{ carbonTons }} tons of CO<sub>2</sub></h1>
+      <h1 class="has-text-centered is-size-1">~{{ tonsOfCO2.toFixed(2) }} tons of CO<sub>2</sub></h1>
     </section>
   </div>
 </template>
@@ -85,12 +85,16 @@ export default {
   },
 
   computed: {
-    carbonTons: function(km) {
+    lbsOfCO2: function() {
       if (!this.distance) {
         return null;
       }
 
-      return ( ((0.000134576 * Math.pow(this.distance, 2)) + (6.1798 * this.distance) + 3446.2 ) / (280.39 * 0.77) ) * 0.951 * 0.8 * (3.15 * 2 + .51) * 2.20462;
+      return ( ((0.000134576 * Math.pow(this.distance, 2)) + (6.1798 * this.distance) + 3446.2 ) / 215.9 ) * 11.42224;
+    },
+
+    tonsOfCO2: function() {
+      return this.lbsOfCO2 / 2000;
     }
   }
 }

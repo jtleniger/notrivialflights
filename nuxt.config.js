@@ -42,7 +42,8 @@ module.exports = {
     // Doc: https://github.com/nuxt-community/axios-module#usage
     '@nuxtjs/axios',
     // Doc:https://github.com/nuxt-community/modules/tree/master/packages/bulma
-    '@nuxtjs/bulma'
+    '@nuxtjs/bulma',
+    '@nuxtjs/proxy'
   ],
   /*
   ** Axios module configuration
@@ -70,15 +71,7 @@ module.exports = {
     }
   },
 
-  devServer: {
-    proxy: {
-      '^/.netlify/functions': {
-        target: 'http://localhost:9000' ,
-        changeOrigin: true,
-        pathRewrite: {
-          '^/.netlify/functions': ''
-        }
-      }
-    }
+  proxy: {
+    '/.netlify': 'http://localhost:9000'
   }
 }
