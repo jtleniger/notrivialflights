@@ -94,7 +94,7 @@ const fetch = async function(url) {
 /**
  * EXPORTED FUNCTION
  */
-exports.handler = function(event, context, callback) {
+exports.handler = async function(event, context, callback) {
     const baseUrl = 'https://api.opencagedata.com/geocode/v1/json?';
 
     let fromRes, toRes = null;
@@ -128,21 +128,24 @@ exports.handler = function(event, context, callback) {
             ['q', to]
         ]);
 
-        Promise.all([fetch(`${baseUrl}${p1.toString()}`), fetch(`${baseUrl}${p2.toString()}`)]).then(function(values) {
-            const geo1 = values[0].results[0].geometry;
-            const geo2 = values[1].results[0].geometry;
-
-            const result = distance(geo1.lat, geo1.lng, geo2.lat, geo2.lng);
-
-            callback(null, {
-                statusCode: 200,
-                body: result
-            });
-        });
+        fromRes = await fetch(`${baseUrl}${p1.toString()}`);
+        toRes = await fetch(`${baseUrl}${p2.toString()}`);
         
     } catch (e) {
         callback(new Error(`Error calling opencage: from=${from}, to=${to}`), {
             statusCode: 400
         });
     }
+
+    const geo1 = fromRes.results[0].geometry;
+    const geo2 = toRes.results[0].geometry;
+
+    const result = distance(geo1.lat, geo1.lng, geo2.lat, geo2.lng);
+
+    callback(null, {
+        statusCode: 200,
+        body: JSON.stringify({
+            result
+        })
+    });
 }
