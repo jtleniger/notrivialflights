@@ -79,3 +79,6 @@ dist
 
 # IDE
 .idea
+
+# Netlify Lambda Build Output
+functions

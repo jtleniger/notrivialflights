@@ -68,5 +68,17 @@ module.exports = {
     extend(config, ctx) {
       
     }
+  },
+
+  devServer: {
+    proxy: {
+      '^/.netlify/functions': {
+        target: 'http://localhost:9000' ,
+        changeOrigin: true,
+        pathRewrite: {
+          '^/.netlify/functions': ''
+        }
+      }
+    }
   }
 }

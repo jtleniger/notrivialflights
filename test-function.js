@@ -1,4 +1,4 @@
-const handler = require('./functions/getdistance').handler;
+const handler = require('./lambda/getdistance').handler;
 
 const event = {
     queryStringParameters: {

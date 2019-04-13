@@ -5,13 +5,21 @@
   "author": "Justin Leniger",
   "private": true,
   "scripts": {
-    "dev": "nuxt",
-    "generate": "nuxt generate"
+    "dev": "npm-run-all --parallel dev:*",
+    "dev:nuxt": "nuxt",
+    "dev:lambda": "netlify-lambda serve lambda",
+    "build": "npm-run-all build:*",
+    "build:nuxt": "nuxt generate",
+    "build:lambda": "netlify-lambda build lambda"
   },
   "dependencies": {
     "@nuxtjs/axios": "^5.0.0",
     "@nuxtjs/bulma": "^1.2.0",
+    "axios": "^0.18.0",
+    "core-js": "^2.6.5",
     "cross-env": "^5.2.0",
+    "netlify-lambda": "^1.4.3",
+    "npm-run-all": "^4.1.5",
     "nuxt": "^2.0.0"
   },
   "devDependencies": {
